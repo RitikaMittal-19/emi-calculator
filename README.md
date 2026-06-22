@@ -110,36 +110,6 @@ npm run start
 
 ⸻
 
-Deployment
-
-The application can be deployed directly to Vercel without any additional configuration.
-
-Deploy with Vercel
-
-1. Push the project to GitHub
-2. Import the repository into Vercel
-3. Deploy using default Next.js settings
-
-No environment variables are required.
-
-⸻
-
-Testing Checklist
-
-Before deployment, verify:
-
-* EMI calculations update correctly
-* Amortization schedule renders properly
-* Prepayment planner updates results accurately
-* Comparison mode works as expected
-* Sensitivity grid displays correct values
-* Cross-tab synchronization functions correctly
-* Theme synchronization works across tabs
-* CSV export generates valid files
-* Shareable URLs restore loan configurations
-
-⸻
-
 Future Enhancements
 
 * Persistent state across browser sessions
