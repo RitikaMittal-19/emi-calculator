@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/*
+ * Dark mode is driven by a `.dark` class on <html>, NOT prefers-color-scheme.
+ * This is intentional: theme is part of synced cross-tab AppState (see
+ * lib/state), so it must be explicitly controlled by app logic, never by
+ * the OS preference media query. Tailwind v4 requires this custom variant
+ * to opt into class-based dark mode instead of its v4 default (media query).
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design system: "Ledger" — see frontend-design notes. The subject is money
+ * moving over time (amortization, interest decay, principal growth), so the
+ * visual language draws from passbooks and bank ledgers rather than a
+ * generic SaaS dashboard: hairline rule lines, tabular numerals, a warm
+ * paper/ink palette, and a serif numeral face for figures that matter.
+ *
+ * Color is functionally meaningful, not decorative:
+ *   gold  = principal / equity / "yours" (warm, building)
+ *   slate = interest / cost (cool, receding)
+ *   green = savings / positive deltas (prepayment impact, interest saved)
+ */
+:root {
+  --paper: #f7f4ee;
+  --paper-raised: #fffdf8;
+  --ink: #14110f;
+  --ink-soft: #4a443d;
+  --rule: rgba(20, 17, 15, 0.12);
+  --rule-strong: rgba(20, 17, 15, 0.22);
+
+  --gold: #9c6f23;
+  --gold-soft: #b8862e;
+  --gold-wash: rgba(184, 134, 46, 0.1);
+
+  --slate: #4f5b63;
+  --slate-soft: #5b6770;
+  --slate-wash: rgba(91, 103, 112, 0.1);
+
+  --signal-green: #2f5d3a;
+  --signal-green-wash: rgba(47, 93, 58, 0.1);
+  --signal-red: #8a3324;
+  --signal-red-wash: rgba(138, 51, 36, 0.1);
+
+  --focus-ring: #9c6f23;
+}
+
+.dark {
+  --paper: #15130f;
+  --paper-raised: #1c1916;
+  --ink: #f3efe7;
+  --ink-soft: #b8b0a2;
+  --rule: rgba(243, 239, 231, 0.12);
+  --rule-strong: rgba(243, 239, 231, 0.24);
+
+  --gold: #d7a94c;
+  --gold-soft: #c89640;
+  --gold-wash: rgba(215, 169, 76, 0.12);
+
+  --slate: #9aa7af;
+  --slate-soft: #8b98a0;
+  --slate-wash: rgba(154, 167, 175, 0.1);
+
+  --signal-green: #6fae7e;
+  --signal-green-wash: rgba(111, 174, 126, 0.12);
+  --signal-red: #d68a78;
+  --signal-red-wash: rgba(214, 138, 120, 0.12);
+
+  --focus-ring: #d7a94c;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-wash: var(--gold-wash);
+  --color-slate: var(--slate);
+  --color-slate-soft: var(--slate-soft);
+  --color-slate-wash: var(--slate-wash);
+  --color-signal-green: var(--signal-green);
+  --color-signal-green-wash: var(--signal-green-wash);
+  --color-signal-red: var(--signal-red);
+  --color-signal-red-wash: var(--signal-red-wash);
+
+  /*
+   * Serif for figures that matter (EMI headline, ledger numerals) — carries
+   * the "this is your money, recorded carefully" passbook character.
+   * Grotesk for UI chrome/labels. Mono for in-table tabular figures, where
+   * column alignment is a functional requirement, not a stylistic one.
+   */
+  --font-serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia,
+    "Noto Serif", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "Roboto Mono", Menlo, Consolas,
+    monospace;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+/* Visible keyboard focus everywhere — non-negotiable for an inputs-heavy app. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
