@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { calculateEmiResult } from "@/lib/calculations/emi";
 import { useCalculatorState } from "@/hooks/useCalculatorState";
@@ -19,6 +19,11 @@ const SLATE = "#5b6770";
 export function PrincipalInterestChart() {
   const { state } = useCalculatorState();
   const { primaryLoan } = state;
+  const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
 
   const result = useMemo(
     () =>
@@ -48,38 +53,42 @@ export function PrincipalInterestChart() {
       </h2>
 
       <div
-        className="h-56 w-full"
-        role="img"
-        aria-label={`Principal ${formatCurrency(result.principal)} versus total interest ${formatCurrency(result.totalInterest)}`}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              innerRadius="62%"
-              outerRadius="92%"
-              paddingAngle={2}
-              stroke="var(--paper-raised)"
-              strokeWidth={2}
-            >
-              {data.map((entry) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value) => formatCurrency(Number(value))}
-              contentStyle={{
-                background: "var(--paper-raised)",
-                border: "1px solid var(--rule)",
-                borderRadius: 4,
-                fontSize: 13,
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+  className="h-56 w-full"
+  role="img"
+  aria-label={`Principal ${formatCurrency(result.principal)} versus total interest ${formatCurrency(result.totalInterest)}`}
+>
+  {!mounted ? (
+    <div className="h-full w-full" />
+  ) : (
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          innerRadius="62%"
+          outerRadius="92%"
+          paddingAngle={2}
+          stroke="var(--paper-raised)"
+          strokeWidth={2}
+        >
+          {data.map((entry) => (
+            <Cell key={entry.name} fill={entry.color} />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(value) => formatCurrency(Number(value))}
+          contentStyle={{
+            background: "var(--paper-raised)",
+            border: "1px solid var(--rule)",
+            borderRadius: 4,
+            fontSize: 13,
+          }}
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  )}
+</div>
 
       <ul className="flex flex-col gap-2 text-sm">
         {data.map((entry) => (

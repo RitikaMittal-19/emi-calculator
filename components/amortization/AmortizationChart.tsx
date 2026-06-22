@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -54,7 +54,11 @@ export function aggregateByYear(schedule: AmortizationRow[]): YearBucket[] {
 export function AmortizationChart({ schedule, breakEvenMonth }: AmortizationChartProps) {
   const data = useMemo(() => aggregateByYear(schedule), [schedule]);
   const breakEvenYear = breakEvenMonth !== null ? Math.ceil(breakEvenMonth / 12) : null;
+  const [mounted, setMounted] = useState(false);
 
+useEffect(() => {
+  setMounted(true);
+}, []);
   return (
     <div className="flex flex-col gap-3">
       <div
@@ -62,53 +66,57 @@ export function AmortizationChart({ schedule, breakEvenMonth }: AmortizationChar
         role="img"
         aria-label="Yearly principal versus interest breakdown across the loan tenure"
       >
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke="var(--rule)" vertical={false} />
-            <XAxis
-              dataKey="year"
-              tickFormatter={(year) => `Y${year}`}
-              tick={{ fill: "var(--ink-soft)", fontSize: 12 }}
-              axisLine={{ stroke: "var(--rule-strong)" }}
-              tickLine={false}
-            />
-            <YAxis
-              tickFormatter={(value: number) =>
-                value === 0 ? "0" : `${(value / 100_000).toFixed(0)}L`
-              }
-              tick={{ fill: "var(--ink-soft)", fontSize: 12 }}
-              axisLine={false}
-              tickLine={false}
-              width={40}
-            />
-            <Tooltip
-              labelFormatter={(year) => `Year ${year}`}
-              formatter={(value) => formatCurrency(Number(value))}
-              contentStyle={{
-                background: "var(--paper-raised)",
-                border: "1px solid var(--rule)",
-                borderRadius: 4,
-                fontSize: 13,
-              }}
-            />
-            <Legend wrapperStyle={{ fontSize: 13, color: "var(--ink-soft)" }} />
-            <Bar dataKey="principal" name="Principal" stackId="amount" fill={GOLD} />
-            <Bar dataKey="interest" name="Interest" stackId="amount" fill={SLATE} />
-            {breakEvenYear !== null ? (
-              <ReferenceLine
-                x={breakEvenYear}
-                stroke="var(--signal-green)"
-                strokeDasharray="4 3"
-                label={{
-                  value: "Break-even",
-                  position: "top",
-                  fill: "var(--signal-green)",
-                  fontSize: 11,
-                }}
-              />
-            ) : null}
-          </BarChart>
-        </ResponsiveContainer>
+        {!mounted ? (
+  <div className="h-full w-full" />
+) : (
+  <ResponsiveContainer width="100%" height="100%">
+    <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
+      <CartesianGrid stroke="var(--rule)" vertical={false} />
+      <XAxis
+        dataKey="year"
+        tickFormatter={(year) => `Y${year}`}
+        tick={{ fill: "var(--ink-soft)", fontSize: 12 }}
+        axisLine={{ stroke: "var(--rule-strong)" }}
+        tickLine={false}
+      />
+      <YAxis
+        tickFormatter={(value: number) =>
+          value === 0 ? "0" : `${(value / 100_000).toFixed(0)}L`
+        }
+        tick={{ fill: "var(--ink-soft)", fontSize: 12 }}
+        axisLine={false}
+        tickLine={false}
+        width={40}
+      />
+      <Tooltip
+        labelFormatter={(year) => `Year ${year}`}
+        formatter={(value) => formatCurrency(Number(value))}
+        contentStyle={{
+          background: "var(--paper-raised)",
+          border: "1px solid var(--rule)",
+          borderRadius: 4,
+          fontSize: 13,
+        }}
+      />
+      <Legend wrapperStyle={{ fontSize: 13, color: "var(--ink-soft)" }} />
+      <Bar dataKey="principal" name="Principal" stackId="amount" fill={GOLD} />
+      <Bar dataKey="interest" name="Interest" stackId="amount" fill={SLATE} />
+      {breakEvenYear !== null ? (
+        <ReferenceLine
+          x={breakEvenYear}
+          stroke="var(--signal-green)"
+          strokeDasharray="4 3"
+          label={{
+            value: "Break-even",
+            position: "top",
+            fill: "var(--signal-green)",
+            fontSize: 11,
+          }}
+        />
+      ) : null}
+    </BarChart>
+  </ResponsiveContainer>
+)}
       </div>
     </div>
   );
